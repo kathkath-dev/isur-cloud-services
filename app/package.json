@@ -1,0 +1,14 @@
+{
+  "name": "isur-cloud-services",
+  "version": "1.0.0",
+  "description": "App web ISUR Cloud Services con Docker, MySQL y CI/CD",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mysql2": "^3.11.5"
+  }
+}
