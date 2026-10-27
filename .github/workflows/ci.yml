@@ -1,0 +1,43 @@
+name: CI ISUR Cloud Services
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v5
+
+      - name: Construir y levantar servicios
+        run: docker compose up -d --build
+
+      - name: Esperar que la app esté lista
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fs http://localhost:8090/health; then
+              echo ""
+              echo "App y base de datos listas"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "La app no respondió a tiempo"
+          exit 1
+
+      - name: Verificar contenedores
+        run: docker compose ps
+
+      - name: Validar aplicación y base de datos
+        run: curl -fs http://localhost:8090/ | grep "ISUR Cloud Services"
+
+      - name: Ver logs
+        if: always()
+        run: docker compose logs
+
+      - name: Detener servicios
+        if: always()
+        run: docker compose down -v
